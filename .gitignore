@@ -1,0 +1,25 @@
+node_modules/
+.tools/
+.expo/
+dist/
+web-build/
+*.log
+
+# Expo / native build output
+.eas/
+android/
+ios/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+google-services.json
+GoogleService-Info.plist
+
+# IDE and OS files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db

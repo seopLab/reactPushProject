@@ -1,0 +1,28 @@
+{
+  "name": "reactpushproject-expo-temp",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "dependencies": {
+    "expo": "~54.0.0",
+    "expo-constants": "~18.0.14",
+    "expo-device": "~8.0.10",
+    "expo-notifications": "~0.32.17",
+    "expo-status-bar": "~3.0.9",
+    "firebase": "^12.18.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-web": "^0.21.2"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.10",
+    "typescript": "~5.9.2"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "private": true
+}
