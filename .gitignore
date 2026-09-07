@@ -23,3 +23,6 @@ GoogleService-Info.plist
 .idea/
 .DS_Store
 Thumbs.db
+
+# files
+*.docx
