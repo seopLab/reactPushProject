@@ -44,3 +44,26 @@ EAS 명령은 프로젝트에 설치하지 않고 필요할 때 `npx eas-cli`로
 4. 푸시 토큰 등록 및 알림 권한 처리
 5. 중복 발송 방지와 알림 이력 저장
 6. GitHub Actions에서 타입 검사, 테스트, EAS 빌드 자동화
+
+## 현재 화면 구조
+
+- `App.tsx`: 현재 탭과 화면 전환을 조합하는 진입점
+- `src/screens/HomeScreen.tsx`: 홈 대시보드
+- `src/screens/ScheduleScreen.tsx`: 청약 일정
+- `src/screens/FavoritesScreen.tsx`: 관심 청약
+- `src/screens/NotificationsScreen.tsx`: 알림 설정
+- `src/screens/ProfileScreen.tsx`: 마이페이지
+- `src/components/BottomTabBar.tsx`: 공통 하단 탭
+- `src/components/ScreenHeader.tsx`: 공통 화면 헤더
+- `src/theme.ts`: 색상과 그림자 토큰
+
+## 탭 다음에 필요한 세팅
+
+1. React Navigation 또는 현재 탭 상태를 실제 URL/뒤로가기 흐름과 연결
+2. 청약 공고 상세 화면과 공통 `HouseCard` 컴포넌트 추가
+3. mock data를 `types/`와 `services/`로 분리
+4. Firebase Authentication, Firestore 컬렉션, 보안 규칙 설정
+5. 알림 권한 요청과 Expo push token 저장 구현
+6. Android/iOS 앱 식별자와 Firebase 설정 파일 등록
+7. 관심 조건 변경, 토글, 필터를 로컬 상태에서 Firestore로 연결
+8. 빈 상태, 로딩, 오류, 네트워크 재시도 화면 추가
