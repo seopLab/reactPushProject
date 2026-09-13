@@ -27,7 +27,13 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-status-bar"
+      "expo-status-bar",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "주변 청약 정보를 찾기 위해 현재 위치를 사용합니다."
+        }
+      ]
     ],
     "extra": {
       "eas": {

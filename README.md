@@ -61,6 +61,24 @@ npx expo start
 
 EAS 명령은 프로젝트에 설치하지 않고 필요할 때 `npx eas-cli`로 실행합니다.
 
+실제 청약 데이터를 로컬에서 확인할 때는 터미널을 두 개 사용합니다.
+
+```powershell
+# 터미널 1: API 키를 읽는 로컬 프록시
+npm run api
+
+# 터미널 2: Expo 앱
+npx expo start
+```
+
+프록시는 청약홈 API와 카카오 주소 검색 API를 호출하고, 앱에는 API 키 없이 공고 데이터와 좌표만 전달합니다. 모바일에서 확인할 때는 PC와 휴대폰이 같은 네트워크에 있어야 합니다. 운영 배포 전에는 이 프록시를 Firebase Cloud Functions로 옮깁니다.
+
+카카오 지도 WebView에는 JavaScript 키가 필요합니다. `.env.local`에는 `KAKAO_JAVASCRIPT_KEY`와 함께 아래 공개 변수도 추가합니다. JavaScript 키는 지도 SDK에 노출되는 용도의 키이며, REST 키와 클라이언트 시크릿은 이 변수에 넣지 않습니다.
+
+```env
+EXPO_PUBLIC_KAKAO_JAVASCRIPT_KEY=카카오_JavaScript_키
+```
+
 푸시 알림과 네이티브 Firebase 설정은 Expo Go만으로는 제한될 수 있으므로, 실제 기기 검증은 EAS Development Build를 사용합니다.
 
 ## 다음 구현 순서
