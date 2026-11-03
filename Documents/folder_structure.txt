@@ -1,0 +1,33 @@
+reactPushProject/
+├─ server/                          Spring Boot
+│  ├─ src/main/java/com/cheongyak/
+│  │  ├─ auth/          A   회원가입·로그인, JWT, SecurityConfig
+│  │  ├─ member/        A   회원 정보·청약 조건
+│  │  ├─ recommend/     B   맞춤 조회, 반경 계산 (housing은 Service로만 조회)
+│  │  ├─ favorite/      B   관심 청약 저장·해제            ← 추가
+│  │  ├─ housing/       C   공고 엔티티·조회
+│  │  ├─ collector/     C   수집 배치 + @Scheduled + 중복 처리 + 주소→좌표
+│  │  ├─ notification/  ?   푸시 토큰, 알림 발송, 조용한 시간  ← 추가
+│  │  ├─ ai/            정민 공고 분석(Gemini), 자격 판정, AI 도우미  ← 추가
+│  │  └─ common/        공통 응답, 예외 처리, CORS 등 설정
+│  ├─ src/main/resources/
+│  │  ├─ application.yml            값은 ${DB_URL} 같은 환경 변수만
+│  │  └─ db/migration/V1__init.sql  ERD 결과 (Flyway)
+│  ├─ src/test/java/...             패키지 구조 그대로
+│  └─ deploy/                       buildspec.yml, appspec.yml, 서비스 등록  ← 추가
+│
+├─ app/                             Expo 앱 (루트에서 이동)
+│  └─ src/
+│     ├─ features/
+│     │  ├─ auth/          A   로그인, 회원가입 1~3
+│     │  ├─ recommend/     B   맞춤 홈, 지도
+│     │  ├─ favorite/      B   관심 청약             ← 추가
+│     │  ├─ housing/       C   공고 목록·상세, 일정
+│     │  ├─ notification/  ?   알림 설정             ← 추가
+│     │  └─ assistant/     정민 AI 청약 도우미        ← 추가
+│     ├─ components/       공통 UI
+│     ├─ api/client.ts     서버 주소 + 토큰 붙이는 fetch 래퍼
+│     └─ theme.ts
+│
+├─ docs/                            WBS, API 명세, ERD (기존 Documents/ 합치기)
+└─ README.md
