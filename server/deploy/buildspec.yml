@@ -1,0 +1,23 @@
+# [초안 · AWS 에서 아직 미검증] CodeBuild 빌드 설정
+# CodeBuild 프로젝트의 Buildspec 경로를 server/deploy/buildspec.yml 로 지정한다
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+  build:
+    commands:
+      - cd server
+      - chmod +x gradlew
+      - ./gradlew --no-daemon build        # 테스트 포함
+  post_build:
+    commands:
+      - cp deploy/appspec.yml appspec.yml  # CodeDeploy 는 appspec.yml 이 묶음 맨 위에 있어야 한다
+
+artifacts:
+  base-directory: server
+  files:
+    - appspec.yml
+    - build/libs/server.jar
+    - deploy/**/*

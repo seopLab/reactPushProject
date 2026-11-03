@@ -1,0 +1,25 @@
+# [초안 · AWS 에서 아직 미검증] CodeDeploy 배포 설정 (EC2 · Ubuntu)
+version: 0.0
+os: linux
+
+files:
+  - source: build/libs/server.jar
+    destination: /opt/cheongyak-server
+  - source: deploy/cheongyak-server.service
+    destination: /etc/systemd/system
+
+file_exists_behavior: OVERWRITE
+
+hooks:
+  ApplicationStop:
+    - location: deploy/scripts/stop.sh
+      timeout: 60
+      runas: root
+  ApplicationStart:
+    - location: deploy/scripts/start.sh
+      timeout: 120
+      runas: root
+  ValidateService:
+    - location: deploy/scripts/validate.sh
+      timeout: 120
+      runas: root

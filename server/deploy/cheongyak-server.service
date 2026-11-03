@@ -1,0 +1,18 @@
+# systemd 서비스 등록 파일 (재부팅해도 자동 실행, 죽으면 재시작)
+# 로그: journalctl -u cheongyak-server -f
+
+[Unit]
+Description=Cheongyak server (Spring Boot)
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/opt/cheongyak-server
+EnvironmentFile=/opt/cheongyak-server/app.env
+ExecStart=/usr/bin/java -jar /opt/cheongyak-server/server.jar
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
