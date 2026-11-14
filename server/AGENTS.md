@@ -54,7 +54,22 @@ com.cheongyak/
 - `dev`/`main` 에 들어간 마이그레이션은 수정 금지 → 다음 번호로 새 파일
 - Supabase DB 는 개발·운영 공용 하나다. 작업 중인 마이그레이션은 **로컬(H2)에서만** 돌리고, `dev` 에 병합된 뒤에 `prod` 프로필로 실행한다 (한번 적용되면 그 파일은 수정 불가)
 - SQL 은 PostgreSQL 문법 기준, H2(`MODE=PostgreSQL`)에서도 돌아가게 쓴다
-- 테이블·컬럼 이름은 snake_case 복수형 테이블 (`members`, `housing_notices`). ERD 초안: FigJam (노션 링크)
+- 테이블·컬럼 이름은 snake_case 복수형 테이블 (`members`, `housing_notices`). ERD: 노션 「ERD (DB 설계)」 / FigJam
+- 현재 스키마: `V1__init.sql` (테이블 13개). 다음 마이그레이션은 **`V2__...`**
+- `db/vendor/postgresql/` 은 Supabase 에서만 도는 파일 (`V1_1__lock_supabase_data_api.sql` — 공개 키로 테이블 접근 차단). 팀 마이그레이션은 여기에 두지 않는다
+- 새 테이블에서 긴 문자열은 `text` 대신 길이 없는 `varchar` (H2 에서 `text` 는 CLOB 이라 엔티티 검증 실패)
+
+### 엔티티 타입 맞추기 (`ddl-auto: validate` — 다르면 서버가 안 뜸)
+
+| DB 컬럼 | Java 타입 |
+|---|---|
+| `bigint generated ... identity` | `Long` + `@Id @GeneratedValue(strategy = GenerationType.IDENTITY)` |
+| `varchar(n)`, `varchar` | `String` |
+| `numeric(p, s)` (lat, lng, area) | `BigDecimal` (`Double` 쓰면 검증 실패) |
+| `int` | `Integer` (null 가능) / `int` |
+| `boolean` | `Boolean` / `boolean` |
+| `date` / `time` / `timestamp` | `LocalDate` / `LocalTime` / `LocalDateTime` |
+| 복합 PK (`member_supply_types`, `favorites` 등) | `@IdClass` 또는 `@EmbeddedId` |
 
 ## 5. 테스트
 
