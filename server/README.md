@@ -42,6 +42,26 @@ cd server
 - 상태 확인: http://localhost:8080/actuator/health
 - DB 보기: http://localhost:8080/h2-console (JDBC URL `jdbc:h2:mem:cheongyak`, 사용자 `sa`)
 
+### Supabase(실제 PostgreSQL) 에 붙여서 실행
+
+| 항목 | 값 |
+|---|---|
+| Supabase 조직 / 프로젝트 | `cheongyak-team` / `cheongyak-alert` (서울 `ap-northeast-2`) |
+| 대시보드 | https://supabase.com/dashboard/project/hzikatvrrrylpeewgapp |
+| 접속 방식 | Session pooler (`aws-0-ap-northeast-2.pooler.supabase.com:5432`, IPv4 가능) |
+
+1. 팀장에게 `app.env` 를 받아 `server/app.env` 에 둔다 (틀은 `deploy/app.env.example`, **Git 에 올리지 않음**)
+2. `prod` 프로필로 실행한다. `app.env` 는 `application.yml` 이 자동으로 읽는다
+
+```powershell
+.\gradlew.bat bootRun --args='--spring.profiles.active=prod'   # Mac/Linux: ./gradlew bootRun --args='--spring.profiles.active=prod'
+```
+
+- 로그에 `Database: jdbc:postgresql://...pooler.supabase.com` 가 보이면 연결된 것
+- 프로필을 안 주면 지금처럼 H2 메모리 DB 로 뜬다 (`app.env` 가 있어도 상관없음)
+- 모두 같은 DB 를 쓰므로 **Flyway 마이그레이션은 dev 에 병합한 뒤에** prod 로 실행한다 (작업 중인 파일이 먼저 적용되면 나중에 수정할 수 없음)
+- 테이블은 Supabase 대시보드 Table Editor 에서 볼 수 있다
+
 ## 실행 파일 만들기
 
 ```powershell

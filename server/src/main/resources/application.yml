@@ -4,6 +4,8 @@ spring:
     name: cheongyak-server
   profiles:
     default: local              # 프로필을 안 주면 local (H2 메모리 DB)
+  config:
+    import: optional:file:./app.env[.properties]   # server/app.env 가 있으면 DB_URL 등을 읽는다 (Git 제외 파일)
   datasource:
     url: ${DB_URL:}
     username: ${DB_USERNAME:}
