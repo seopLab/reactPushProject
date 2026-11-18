@@ -10,6 +10,14 @@ export const colors = {
   softOrange: '#fff0e4',
   softRed: '#ffe4dc',
   green: '#5da985',
+  // 회원가입 Figma 시안 (02~04)
+  brand: '#c2502a',
+  brandSoft: '#fbecdf',
+  cream: '#fbf6f1',
+  border: '#ddd3ca',
+  disabled: '#ebe3dc',
+  disabledText: '#a39a93',
+  error: '#b3261e',
 };
 
 export const shadow = {

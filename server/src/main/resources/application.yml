@@ -2,12 +2,16 @@
 spring:
   application:
     name: cheongyak-server
+  config:
+    import: optional:file:./.env[.properties]   # server/.env (Git 제외). 없으면 무시
   profiles:
     default: local              # 프로필을 안 주면 local (H2 메모리 DB)
   datasource:
     url: ${DB_URL:}
     username: ${DB_USERNAME:}
     password: ${DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: 5      # Supabase 무료 플랜은 동시 접속 수가 적다
   jpa:
     open-in-view: false
     hibernate:
@@ -47,6 +51,16 @@ spring:
   h2:
     console:
       enabled: true             # http://localhost:8080/h2-console
+
+---
+# dev: 개발용 Supabase. server/.env 에 DB_URL 등을 넣고 ./gradlew bootRun --args='--spring.profiles.active=dev'
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    hikari:
+      maximum-pool-size: 2      # 팀원 여러 명이 같은 DB 에 붙으므로 더 작게
 
 ---
 # prod: 실제 PostgreSQL (Supabase). 서버에서 SPRING_PROFILES_ACTIVE=prod + DB_URL 등 환경 변수로 실행
