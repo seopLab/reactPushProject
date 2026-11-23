@@ -10,6 +10,8 @@ spring:
     url: ${DB_URL:}
     username: ${DB_USERNAME:}
     password: ${DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: 5      # Supabase 무료 플랜은 동시 접속 수가 적다
   jpa:
     open-in-view: false
     hibernate:
