@@ -7,9 +7,11 @@ export type DocumentType = 'RESIDENT_REGISTRATION' | 'FAMILY_RELATION' | 'SUBSCR
 export type AgreementKey = 'termsAgreed' | 'privacyAgreed' | 'locationAgreed' | 'notificationAgreed';
 
 export type SignupRequest = Record<AgreementKey, boolean> & {
+  loginId: string;
+  email: string;
+  password: string;
+  nickname: string;
   region: string;
-  latitude: number | null;
-  longitude: number | null;
   birthDate: string; // YYYY-MM-DD
   householdSize: number; // 4 = 4명 이상
   housingOwnership: HousingOwnership;
@@ -23,5 +25,6 @@ export type SignupRequest = Record<AgreementKey, boolean> & {
 export type SignupResponse = {
   message: string;
   saved: boolean;
-  received: SignupRequest;
+  memberId: number;
+  received: Omit<SignupRequest, 'password'>; // 비밀번호는 응답에 담지 않는다
 };

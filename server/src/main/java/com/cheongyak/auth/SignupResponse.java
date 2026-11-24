@@ -1,5 +1,5 @@
 package com.cheongyak.auth;
 
-// saved 는 DB 저장 여부. 지금은 항상 false
-public record SignupResponse(String message, boolean saved, SignupRequest received) {
+// received 의 password 는 SignupRequest 에서 WRITE_ONLY 라 JSON 에 나가지 않는다
+public record SignupResponse(String message, boolean saved, Long memberId, SignupRequest received) {
 }
