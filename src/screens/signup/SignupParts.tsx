@@ -54,16 +54,19 @@ export function CheckRow({ checked, onPress, title, description }: CheckRowProps
   );
 }
 
-type FieldProps = TextInputProps & { label: string; icon?: string };
+type FieldProps = TextInputProps & { label: string; icon?: string; error?: string };
 
-export function Field({ label, icon, style, ...inputProps }: FieldProps) {
+export function Field({ label, icon, error, style, ...inputProps }: FieldProps) {
   return (
-    <View style={[styles.field, style]}>
-      {icon ? <Text style={styles.fieldIcon}>{icon}</Text> : null}
-      <View style={styles.fieldBody}>
-        <Text style={styles.fieldLabel}>{label}</Text>
-        <TextInput placeholderTextColor={colors.disabledText} style={styles.fieldInput} {...inputProps} />
+    <View style={style}>
+      <View style={[styles.field, error ? styles.fieldError : null]}>
+        {icon ? <Text style={styles.fieldIcon}>{icon}</Text> : null}
+        <View style={styles.fieldBody}>
+          <Text style={styles.fieldLabel}>{label}</Text>
+          <TextInput placeholderTextColor={colors.disabledText} style={styles.fieldInput} {...inputProps} />
+        </View>
       </View>
+      {error ? <Text style={styles.fieldErrorText}>{error}</Text> : null}
     </View>
   );
 }
@@ -95,6 +98,8 @@ const styles = StyleSheet.create({
   fieldBody: { flex: 1 },
   fieldLabel: { color: colors.muted, fontSize: 12 },
   fieldInput: { color: colors.ink, fontSize: 17, paddingVertical: 4 },
+  fieldError: { borderColor: colors.error },
+  fieldErrorText: { color: colors.error, fontSize: 12, marginTop: 6, marginLeft: 4 },
   section: { marginTop: 26, marginBottom: 12 },
   sectionTitle: { color: colors.ink, fontSize: 16, fontWeight: '800' },
   sectionHint: { color: colors.muted, fontSize: 12, marginTop: 4 },

@@ -4,7 +4,7 @@ export type Option<T> = { value: T; label: string };
 
 export const agreements: { key: AgreementKey; label: string; required: boolean; detail: string }[] = [
   { key: 'termsAgreed', label: '서비스 이용약관', required: true, detail: '청약소식 서비스 이용에 관한 기본 약관입니다. (실제 약관 문구는 확정 후 교체)' },
-  { key: 'privacyAgreed', label: '개인정보 수집·이용', required: true, detail: '수집 항목: 알림 기준 지역, 생년월일, 가구원 수, 주택 보유 여부, 청약 조건, 서류 준비 상태\n목적: 맞춤 청약 공고 추천 및 알림\n보관: 회원 탈퇴 시 즉시 삭제\n서류 원본은 저장하지 않습니다.' },
+  { key: 'privacyAgreed', label: '개인정보 수집·이용', required: true, detail: '수집 항목: 아이디, 이메일, 비밀번호(암호화 저장), 닉네임, 알림 기준 지역, 생년월일, 가구원 수, 주택 보유 여부, 청약 조건, 서류 준비 상태\n목적: 맞춤 청약 공고 추천 및 알림\n보관: 회원 탈퇴 시 즉시 삭제\n서류 원본은 저장하지 않습니다.' },
   { key: 'locationAgreed', label: '위치정보 이용', required: false, detail: '현재 위치로 알림 기준 지역을 설정할 때만 사용합니다. 동의하지 않아도 지역을 직접 입력할 수 있어요.' },
   { key: 'notificationAgreed', label: '청약 알림 수신', required: false, detail: '새 공고, 마감 임박, 당첨자 발표 알림을 보내드려요. 마이페이지에서 언제든 끌 수 있어요.' },
 ];

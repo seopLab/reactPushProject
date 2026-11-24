@@ -4,19 +4,22 @@ import { ScreenHeader } from '../../components/ScreenHeader';
 import { signup } from '../../services/authApi';
 import { colors } from '../../theme';
 import { SignupRequest, SignupResponse } from '../../types/signup';
-import { ConditionsStep, ConsentStep, DocumentsStep, DoneStep, InfoStep, SignupDraft } from './SignupSteps';
+import { AccountStep, ConditionsStep, ConsentStep, DocumentsStep, DoneStep, InfoStep, SignupDraft } from './SignupSteps';
+import { isAccountComplete } from './signupValidation';
 
-type Step = 'consent' | 'info' | 'conditions' | 'documents' | 'done';
+type Step = 'consent' | 'account' | 'info' | 'conditions' | 'documents' | 'done';
 
-const order: Step[] = ['consent', 'info', 'conditions', 'documents', 'done'];
+const order: Step[] = ['consent', 'account', 'info', 'conditions', 'documents', 'done'];
+const PROGRESS_STEPS = 4;
 
-// 약관 동의를 먼저 받고, 동의하면 Figma 02~04 의 3단계 입력으로 넘어간다
+// 약관 동의 → 계정 정보 → Figma 02~04 의 입력 3단계
 const stepCopy: Record<Step, { eyebrow: string; title: string; description: string; button: string; progress?: number }> = {
   consent: { eyebrow: '시작 · 약관 동의', title: '서비스 이용 동의', description: '청약소식을 이용하려면 아래 내용을 확인하고 동의해 주세요.', button: '동의하고 시작하기' },
-  info: { eyebrow: '1/3 · 기본 정보', title: '내 기본 정보', description: '내 위치와 가구 정보를 설정하면 가까운 공고부터 찾아드려요.', button: '다음 · 청약 조건', progress: 1 },
-  conditions: { eyebrow: '2/3 · 청약 조건', title: '청약 조건 설정', description: '관심 조건은 언제든 마이페이지에서 수정할 수 있어요.', button: '다음 · 서류 준비', progress: 2 },
-  documents: { eyebrow: '3/3 · 서류 준비', title: '미리 챙길 서류', description: '공고별 제출 서류와 시기는 다를 수 있어요.', button: '등록하고 홈으로', progress: 3 },
-  done: { eyebrow: '가입 완료', title: '가입 정보가 확인됐어요', description: '', button: '홈으로' },
+  account: { eyebrow: '1/4 · 계정 정보', title: '계정 만들기', description: '로그인에 사용할 아이디와 비밀번호를 정해 주세요.', button: '다음 · 기본 정보', progress: 1 },
+  info: { eyebrow: '2/4 · 기본 정보', title: '내 기본 정보', description: '내 위치와 가구 정보를 설정하면 가까운 공고부터 찾아드려요.', button: '다음 · 청약 조건', progress: 2 },
+  conditions: { eyebrow: '3/4 · 청약 조건', title: '청약 조건 설정', description: '관심 조건은 언제든 마이페이지에서 수정할 수 있어요.', button: '다음 · 서류 준비', progress: 3 },
+  documents: { eyebrow: '4/4 · 서류 준비', title: '미리 챙길 서류', description: '공고별 제출 서류와 시기는 다를 수 있어요.', button: '등록하고 홈으로', progress: 4 },
+  done: { eyebrow: '가입 완료', title: '회원가입이 완료됐어요', description: '', button: '홈으로' },
 };
 
 const emptyDraft: SignupDraft = {
@@ -24,9 +27,12 @@ const emptyDraft: SignupDraft = {
   privacyAgreed: false,
   locationAgreed: false,
   notificationAgreed: false,
+  loginId: '',
+  email: '',
+  password: '',
+  passwordConfirm: '',
+  nickname: '',
   region: '',
-  latitude: null,
-  longitude: null,
   birthDate: '',
   householdSize: null,
   housingOwnership: null,
@@ -48,6 +54,7 @@ function isValidBirthDate(value: string) {
 
 function canProceed(step: Step, draft: SignupDraft) {
   if (step === 'consent') return draft.termsAgreed && draft.privacyAgreed;
+  if (step === 'account') return isAccountComplete(draft);
   if (step === 'info') return draft.region.trim() !== '' && isValidBirthDate(draft.birthDate) && draft.householdSize !== null && draft.housingOwnership !== null;
   if (step === 'conditions') return draft.supplyTypes.length > 0 && draft.hasSubscriptionAccount !== null;
   return true;
@@ -60,9 +67,11 @@ function toRequest(draft: SignupDraft): SignupRequest {
     privacyAgreed: draft.privacyAgreed,
     locationAgreed: draft.locationAgreed,
     notificationAgreed: draft.notificationAgreed,
+    loginId: draft.loginId,
+    email: draft.email.trim(),
+    password: draft.password,
+    nickname: draft.nickname.trim(),
     region: draft.region.trim(),
-    latitude: draft.latitude,
-    longitude: draft.longitude,
     birthDate: draft.birthDate,
     householdSize: draft.householdSize ?? 0,
     housingOwnership: draft.housingOwnership ?? 'NONE',
@@ -143,12 +152,13 @@ export function SignupScreen({ onClose, onComplete }: Props) {
       <ScrollView ref={scrollRef} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         {copy.progress ? (
           <View style={styles.progress}>
-            {[1, 2, 3].map((bar) => <View key={bar} style={[styles.progressBar, bar <= (copy.progress ?? 0) && styles.progressBarOn]} />)}
+            {Array.from({ length: PROGRESS_STEPS }, (_, index) => index + 1).map((bar) => <View key={bar} style={[styles.progressBar, bar <= (copy.progress ?? 0) && styles.progressBarOn]} />)}
           </View>
         ) : null}
         <ScreenHeader eyebrow={copy.eyebrow} title={copy.title} description={step === 'done' ? result?.message : copy.description} />
 
         {step === 'consent' && <ConsentStep draft={draft} update={update} />}
+        {step === 'account' && <AccountStep draft={draft} update={update} />}
         {step === 'info' && <InfoStep draft={draft} update={update} />}
         {step === 'conditions' && <ConditionsStep draft={draft} update={update} />}
         {step === 'documents' && <DocumentsStep draft={draft} update={update} />}

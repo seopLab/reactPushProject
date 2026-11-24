@@ -7,11 +7,15 @@ import { CheckBox, CheckRow, ChipGroup, Field, SectionTitle } from './SignupPart
 import {
   accountOptions, agreements, documentOptions, extraOptions, householdOptions, housingOptions, labelOf, labelsOf, supplyOptions,
 } from './signupOptions';
+import { accountErrors } from './signupValidation';
 
 export type SignupDraft = Record<AgreementKey, boolean> & {
+  loginId: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
+  nickname: string;
   region: string;
-  latitude: number | null;
-  longitude: number | null;
   birthDate: string;
   householdSize: number | null;
   housingOwnership: HousingOwnership | null;
@@ -72,6 +76,77 @@ export function ConsentStep({ draft, update }: StepProps) {
   );
 }
 
+export function AccountStep({ draft, update }: StepProps) {
+  const errors = accountErrors(draft);
+
+  return (
+    <View style={styles.accountFields}>
+      <Field
+        label="아이디"
+        placeholder="영문 소문자·숫자 4~20자"
+        value={draft.loginId}
+        maxLength={20}
+        autoCapitalize="none"
+        autoCorrect={false}
+        autoComplete="username"
+        textContentType="username"
+        error={errors.loginId}
+        onChangeText={(loginId) => update({ loginId: loginId.toLowerCase() })}
+      />
+      <Field
+        label="이메일"
+        placeholder="예: cheongyak@example.com"
+        value={draft.email}
+        maxLength={255}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
+        autoComplete="email"
+        textContentType="emailAddress"
+        error={errors.email}
+        onChangeText={(email) => update({ email })}
+      />
+      <Field
+        label="비밀번호"
+        placeholder="영문·숫자 포함 8~20자"
+        value={draft.password}
+        maxLength={20}
+        secureTextEntry
+        autoCapitalize="none"
+        autoCorrect={false}
+        autoComplete="new-password"
+        textContentType="newPassword"
+        error={errors.password}
+        onChangeText={(password) => update({ password })}
+      />
+      <Field
+        label="비밀번호 확인"
+        placeholder="비밀번호를 한 번 더 입력해 주세요"
+        value={draft.passwordConfirm}
+        maxLength={20}
+        secureTextEntry
+        autoCapitalize="none"
+        autoCorrect={false}
+        autoComplete="new-password"
+        textContentType="newPassword"
+        error={errors.passwordConfirm}
+        onChangeText={(passwordConfirm) => update({ passwordConfirm })}
+      />
+      <Field
+        label="닉네임"
+        placeholder="앱에서 불릴 이름 (2~20자)"
+        value={draft.nickname}
+        maxLength={20}
+        autoCorrect={false}
+        autoComplete="nickname"
+        textContentType="nickname"
+        error={errors.nickname}
+        onChangeText={(nickname) => update({ nickname })}
+      />
+    </View>
+  );
+}
+
 export function InfoStep({ draft, update }: StepProps) {
   const [locationMessage, setLocationMessage] = useState('');
   const [isLocating, setIsLocating] = useState(false);
@@ -94,7 +169,7 @@ export function InfoStep({ draft, update }: StepProps) {
       const place = (await Location.reverseGeocodeAsync(coordinates))[0];
       const city = place?.city ?? place?.subregion ?? '';
       const district = place?.district ? ` ${place.district}` : '';
-      update({ ...coordinates, region: `${place?.region ?? ''} ${city}${district}`.trim() || '현재 위치' });
+      update({ region: `${place?.region ?? ''} ${city}${district}`.trim() || '현재 위치' });
     } catch {
       setLocationMessage('현재 위치를 확인하지 못했어요. 지역을 직접 입력해 주세요.');
     } finally {
@@ -110,7 +185,7 @@ export function InfoStep({ draft, update }: StepProps) {
         placeholder="예: 서울특별시 강남구"
         value={draft.region}
         maxLength={50}
-        onChangeText={(region) => update({ region, latitude: null, longitude: null })}
+        onChangeText={(region) => update({ region })}
       />
       <Pressable onPress={useCurrentLocation} disabled={isLocating} style={styles.locationButton}>
         <Text style={styles.locationButtonText}>{isLocating ? '현재 위치를 찾는 중…' : '⌖ 현재 위치로 설정'}</Text>
@@ -229,6 +304,9 @@ export function DoneStep({ result }: { result: SignupResponse }) {
   const r = result.received;
   const period = r.subscriptionMonths == null ? '' : ` (${Math.floor(r.subscriptionMonths / 12)}년 ${r.subscriptionMonths % 12}개월)`;
   const rows: [string, string][] = [
+    ['아이디', r.loginId],
+    ['이메일', r.email],
+    ['닉네임', r.nickname],
     ['알림 기준 지역', r.region],
     ['생년월일', r.birthDate],
     ['가구원 수', r.householdSize === 4 ? '4명 이상' : `${r.householdSize}명`],
@@ -262,6 +340,7 @@ const styles = StyleSheet.create({
   optional: { color: colors.muted },
   viewLink: { color: colors.brand, fontSize: 14, fontWeight: '700', paddingLeft: 8 },
   terms: { color: colors.muted, fontSize: 12, lineHeight: 19, backgroundColor: colors.cream, borderRadius: 10, padding: 12, marginLeft: 39, marginBottom: 8 },
+  accountFields: { gap: 14 },
   locationButton: { alignSelf: 'flex-start', paddingVertical: 14 },
   locationButtonText: { color: colors.brand, fontSize: 14, fontWeight: '800' },
   note: { color: colors.muted, fontSize: 12, marginTop: 4, marginBottom: 12 },
