@@ -49,6 +49,26 @@ tasks.named('bootJar') {
 	archiveFileName = 'server.jar'
 }
 
+// 공고문 분석기 콘솔 실행: gradlew analyzeNotice --args="<PDF URL 또는 경로>"  (GEMINI_API_KEY 필요)
+tasks.register('analyzeNotice', JavaExec) {
+	group = 'ai'
+	description = '공고문 PDF 를 Gemini 로 분석해 JSON 으로 출력'
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.cheongyak.ai.NoticeAnalyzerCli'
+	workingDir = projectDir
+	defaultCharacterEncoding = 'UTF-8'
+}
+
+// 정확도 비교: gradlew checkAccuracy --args="<AI 결과.json> <정답지.json>"
+tasks.register('checkAccuracy', JavaExec) {
+	group = 'ai'
+	description = 'AI 분석 결과를 정답지와 항목별로 비교'
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.cheongyak.ai.AnalysisAccuracyCli'
+	workingDir = projectDir
+	defaultCharacterEncoding = 'UTF-8'
+}
+
 // 실행 안 되는 plain jar 는 만들지 않음
 tasks.named('jar') {
 	enabled = false
